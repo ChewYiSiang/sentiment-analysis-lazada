@@ -254,3 +254,10 @@ svm_pipeline = models["LinearSVC"]
 ## Acknowledgements
 
 Dataset sourced from [Kaggle — Lazada App Reviews (Google Store)](https://www.kaggle.com/datasets/bwandowando/lazada-app-reviews-from-google-store/data) by bwandowando.
+
+## Where I would take this next
+
+- **Hand-label a validation set to separate label noise from model error.** `sentiment` is derived from `review_rating`, so the model is learning to predict stars. Since 3-star text is genuinely bimodal, a few hundred hand-labelled reviews would quantify how much of the neutral-class gap is reachable at all. That measurement is worth having before further tuning, because the neutral class is where the macro F1 headroom sits.
+- **Add a transformer baseline.** TF-IDF discards word order, so negation is invisible to the model: "not good" and "good" share the same features. A fine-tuned encoder would capture it, and the comparison against this Linear SVM would be the most interesting result in the project. I built that model afterwards in [sg-sentiment-roberta](https://github.com/ChewYiSiang/sg-sentiment-roberta), so the head-to-head is a short step from here.
+- **Compare the 3-class framing against binary.** Collapsing to positive versus negative would test directly whether a coarser target yields more actionable output for a business reader, rather than assuming it.
+- **Serve the pipeline behind an endpoint.** It currently scores in-process. A small FastAPI service would make the result verifiable by someone else, and reusable on new review streams.
